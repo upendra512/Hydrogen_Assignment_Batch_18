@@ -1,0 +1,30 @@
+# source: Mularski & Modlinski, Energies 14(6), 1729 (2021), Figure 9; orange Experiment markers (experimental data associated with Brown et al. 1988)
+# digitised by: Batch 18 analysis, 2026-11-06; Python 300-dpi raster, Pillow/NumPy/SciPy marker centroids, axes calibrated from tick marks
+# note: approximate centerline measurements transcribed from experimental markers only; first two CO markers overlap and were separated by two-center clustering; estimated digitisation uncertainty +/-0.3 percentage point and +/-0.01 m
+z_m,CO_molfrac_pct,H2_molfrac_pct,CO2_molfrac_pct,H2O_molfrac_pct
+0.0887,2.24,,,
+0.1057,4.15,,,
+0.1066,,,10.35,
+0.1123,,,7.46,
+0.1184,,2.81,,
+0.1512,,,,25.26
+0.2351,29.14,,,
+0.2737,,,13.45,
+0.2799,,,,33.53
+0.2899,,15.01,,
+0.4378,34.92,,,
+0.5038,,,,26.23
+0.5074,,,15.86,
+0.5141,,17.63,,
+0.7419,34.22,,,
+0.7822,,18.29,,
+0.7839,,,16.41,
+0.7862,,,,26.23
+1.0716,30.86,,,
+1.0943,,,,29.95
+1.0958,,19.01,,
+1.0975,,,16.83,
+1.6966,,,,27.05
+1.7000,34.45,,,
+1.7172,,17.89,,
+1.7246,,,17.10,

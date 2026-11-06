@@ -1,0 +1,15 @@
+# source: Mularski & Modlinski, Energies 14(6) 1729 (2021), Figure 9
+# digitised by: <name>   date: <yyyy-mm-dd>   tool: WebPlotDigitizer 4.x
+# note: EXPERIMENTAL points (Smith et al.), not the paper's model curve
+# delete these comment lines is NOT necessary - the loader skips '#'
+z_m,CO_molfrac_pct,H2_molfrac_pct,CO2_molfrac_pct,H2O_molfrac_pct
+0.00,,,,
+0.10,,,,
+0.20,,,,
+0.30,,,,
+0.45,,,,
+0.60,,,,
+0.90,,,,
+1.20,,,,
+1.50,,,,
+1.80,,,,

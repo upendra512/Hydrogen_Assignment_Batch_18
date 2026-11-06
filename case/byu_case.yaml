@@ -1,0 +1,173 @@
+# ============================================================================
+#  BYU ENTRAINED-FLOW GASIFIER — CASE DEFINITION
+#  ME40249 Batch 18 · Entrained-Flow Gasifier
+#
+#  Source: Mularski, J. & Modlinski, N. (2021), "Entrained-Flow Coal
+#  Gasification Process Simulation with the Emphasis on Empirical Char
+#  Conversion Models Optimization Procedure", Energies 14(6), 1729.
+#  Open access, CC BY.  https://www.mdpi.com/1996-1073/14/6/1729
+#
+#  Underlying experiment: Brigham Young University entrained-flow reactor.
+#  Experimental data traces to Brown et al. (1988), AIChE J 34(3), and the
+#  BYU local-measurement studies in Fuel (1985-86).
+#
+#  Source values are transcribed from Tables 2–4 of the cited paper. The
+#  oxygen ultimate fraction is calculated by difference from its reported
+#  dry-ash-free C/H/N/S analysis. Assumed values are labeled explicitly.
+# ============================================================================
+
+meta:
+  case_name: "BYU atmospheric entrained-flow gasifier"
+  batch: 18
+  course: "ME40249 Introduction to Hydrogen Energy and Utilization"
+  reference: "Mularski & Modlinski, Energies 14(6) 1729, 2021"
+  verified_by: "Batch 18 registration checked against user-supplied selection-sheet CSV"
+  verified_date: "2026-11-06"
+
+# ----------------------------------------------------------------------------
+# GEOMETRY
+# A plain cylinder. This is why we chose this case: the domain is trivial,
+# so all your effort goes into physics rather than meshing.
+# ----------------------------------------------------------------------------
+geometry:
+  diameter_m: 0.20
+  length_m: 1.80
+  shape: cylinder
+  # For Tier 2 you will discretise this as (nr x nz). Start coarse.
+  grid:
+    nz: 600         # axial stations; fine grid used for final Tier 2 figures
+    nr: 120         # radial annuli; see report/grid_independence.csv
+  injectors:
+    # BYU injector geometry reported by Abani & Ghoniem (2013), Fuel 104,
+    # Fig. 1 / test conditions: primary nozzle ID 1.3 cm; secondary annular
+    # nozzle OD 2.86 cm. Mularski & Modliński (2021) do not tabulate these.
+    primary_inner_diameter_m: 0.013
+    secondary_outer_diameter_m: 0.0286
+    # Reduced-model regularization: represents initial jet spreading and
+    # prevents stagnant empty stream tubes. Vary this in the sensitivity study.
+    background_mixing_fraction: 0.20
+
+# ----------------------------------------------------------------------------
+# OPERATING CONDITIONS
+# Atmospheric pressure is the second reason we chose this case. No
+# compressibility corrections, no high-pressure property tables.
+# ----------------------------------------------------------------------------
+operating:
+  pressure_Pa: 101325.0
+  oxidant: "O2 (with Ar diluent and steam)"
+  wall_bc: "adiabatic in the reduced model; verify against the paper's CFD setup"
+  wall_temperature_K: null    # fill in from the paper
+
+# ----------------------------------------------------------------------------
+# FUEL — pulverised bituminous Utah coal
+# Paper Table 2. Proximate analysis is as-received; ultimate analysis is DAF.
+# ----------------------------------------------------------------------------
+fuel:
+  name: "Utah bituminous coal"
+  proximate_wt_pct:
+    moisture: 2.4
+    volatile_matter: 45.6
+    fixed_carbon: 43.7
+    ash: 8.3
+  ultimate_wt_pct:            # dry-ash-free; O is by difference.
+    C: 77.6
+    H: 6.56
+    N: 1.42
+    S: 0.55
+    O: 13.87
+  hhv_MJ_per_kg: null         # Not reported in Table 2; estimated by the
+                              # Channiwala correlation in config.py.
+  particles:
+    distribution: rosin_rammler
+    minimum_diameter_um: 1.0
+    maximum_diameter_um: 85.0
+    mean_diameter_um: 36.0
+    spread_parameter: 1.033
+    density_kg_m3: 1300.0     # Provisional engineering assumption; verify/source.
+  feed_rate_kg_s: 0.006633333333333333  # 23.88 kg/h, paper Table 3.
+
+# ----------------------------------------------------------------------------
+# INLET STREAMS — paper Table 3
+# Two coaxial streams. Coal is carried in the primary.
+# Mole fractions, not mass fractions. They sum to 1.0 — check that they do.
+# ----------------------------------------------------------------------------
+inlets:
+  primary:
+    mass_flow_g_s: 7.288888888888889  # 26.24 kg/h, paper Table 3.
+    temperature_K: 400.0
+    composition_mol_frac:
+      O2:  0.850
+      Ar:  0.126
+      H2O: 0.024
+    carries_coal: true
+  secondary:
+    mass_flow_g_s: 1.838888888888889  # 6.62 kg/h, paper Table 3.
+    temperature_K: 473.0
+    composition_mol_frac:
+      H2O: 1.0
+    carries_coal: false
+
+# ----------------------------------------------------------------------------
+# WHAT THE PAPER'S OWN MODEL USED
+# The project uses the published BYU case inputs and selected fitted chemistry
+# parameters, but does not reproduce the full CFD solver and its couplings.
+# This record makes that distinction explicit.
+# ----------------------------------------------------------------------------
+reference_model:
+  dimensionality: "2-D axisymmetric, ~100,000 rectangular cells, grid-independence study performed"
+  turbulence: "realizable k-epsilon; discrete random walk particle dispersion, time-scale constant 0.6"
+  radiation: "discrete ordinates + weighted-sum-of-grey-gases (WSGG)"
+  devolatilization: "competing two-step (C2SM), rates tuned against FG-DVC"
+  volatile_composition: "tar (CxHyOz, C7 backbone) + light gases + H2O + CO + CO2"
+  char_conversion: "kinetic/diffusion, compared against CBK/E (oxidation) and CBK/G (gasification)"
+  gas_phase: "global mechanism tuned for consistency with GRI-Mech"
+  reported_average_error_pct:
+    CO: 4.82
+    H2: 5.47
+    CO2: 4.72
+    H2O: 9.58
+  reported_max_error_pct:
+    CO: 18.48
+    H2: 7.95
+    CO2: 10.15
+    H2O: 20.22
+  note: >
+    The paper sets H2O aside in validation because the experimental H2O carries
+    +/-14% uncertainty from the char ash analysis. Validate on CO, H2 and CO2,
+    and say why in the report. Quoting this shows you read the source.
+
+# ----------------------------------------------------------------------------
+# THE FIVE ZONES
+# Know these before you run anything. They are how you tell a converged
+# solution from a plausible-looking wrong one.
+# ----------------------------------------------------------------------------
+expected_physics:
+  zones:
+    - name: "lean zone"
+      description: "near the inlet, high O2, particles heating up"
+    - name: "recirculation zone"
+      description: "near the wall/burner, where flow and particles recirculate"
+    - name: "flame zone"
+      description: "volatiles and char burn; peak temperature ~3000 K in the paper"
+    - name: "post-flame zone"
+      description: "O2 exhausted; CO and H2 are mainly formed here"
+    - name: "reforming zone"
+      description: "downstream, endothermic C+CO2 and C+H2O dominate; T falls"
+  sanity_checks:
+    - "O2 must go to ~zero well before the outlet. If it doesn't, your feed ratio is wrong."
+    - "Peak gas temperature should land in the 2500-3000 K band. Above ~3200 K, suspect the char oxidation rate or the volatile heating value."
+    - "Carbon must balance to <1%. Check it every run — see src/gasifier/postprocess.py::element_balance"
+    - "CO should rise then plateau; H2 rises monotonically in the reforming zone."
+
+# ----------------------------------------------------------------------------
+# NUMERICS
+# ----------------------------------------------------------------------------
+numerics:
+  # Reduced-order radial closure: D_t = C_mix U_bulk R; turbulent Schmidt
+  # and Prandtl numbers are documented in src/gasifier/reactor_2d.py.
+  # This is an assumption for sensitivity analysis, not a measured BYU value.
+  turbulent_radial_mixing_coefficient: 0.05
+  # Temperature the mixture is "patched" to at z=0 so the flame can anchor.
+  # See TODO(ignition) in src/gasifier/reactor_1d.py. Set to null to see what
+  # happens without it — the answer is "nothing happens", which is the point.
+  ignition_T_K: 1400.0

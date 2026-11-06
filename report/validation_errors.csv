@@ -1,0 +1,5 @@
+species,n_points,mean_abs_error_pp,max_abs_error_pp,paper_table8_mean_abs_error_pp,paper_table8_max_abs_error_pp
+CO,7,12.811,25.722,4.82,18.48
+H2,6,10.498,13.027,5.47,7.95
+CO2,7,7.268,14.458,4.72,10.15
+H2O,6,25.541,31.337,9.58,20.22

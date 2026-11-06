@@ -1,0 +1,10 @@
+name: batch18-notebook
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy=1.26
+  - scipy
+  - pandas
+  - matplotlib
+  - ipykernel

@@ -1,0 +1,2 @@
+nr,nz,peak_T_K,outlet_area_average_T_K,carbon_conversion_pct,cold_gas_efficiency_pct_course_LHV,max_abs_element_error_pct,dry_inert_free_CO_vol_pct,dry_inert_free_H2_vol_pct,dry_inert_free_CO2_vol_pct,dry_inert_free_CH4_vol_pct
+120,600,4000.0,3556.6550343310973,53.52347641706232,25.946698718166676,2.0549130002758386e-06,58.663856649503906,16.679448921919732,24.20536131199488,0.45133311658147207
